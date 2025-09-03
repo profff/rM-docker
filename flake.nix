@@ -9,9 +9,10 @@
         "x86_64-linux"
         "aarch64-linux"
 
-        # guestfish doesn't support darwin
-        # "x86_64-darwin"
-        # "aarch64-darwin"
+        # Darwin will require a linux builder to build the kernel and rootfs.
+        # See linux-builder in the nixpkgs manual.
+        "x86_64-darwin"
+        "aarch64-darwin"
       ];
 
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
@@ -20,15 +21,17 @@
       packages = forAllSystems (
         system:
         let
+          linuxSystem = builtins.replaceStrings [ "darwin" ] [ "linux" ] system;
           pkgs = nixpkgs.legacyPackages."${system}";
+          pkgsLinux = nixpkgs.legacyPackages."${linuxSystem}";
 
-          kernel = pkgs.callPackage ./nix/kernel.nix { };
+          kernel = pkgsLinux.callPackage ./nix/kernel.nix { };
 
           versions = import ./nix/versions.nix { inherit (nixpkgs) lib; };
 
-          extractor = pkgs.callPackage ./nix/extractor.nix { };
+          extractor = pkgsLinux.callPackage ./nix/extractor.nix { };
 
-          allRootFs = (pkgs.callPackage ./nix/rootfs.nix { inherit versions extractor; }).rootfs;
+          allRootFs = (pkgsLinux.callPackage ./nix/rootfs.nix { inherit versions extractor; }).rootfs;
 
           allRootFs' = nixpkgs.lib.mapAttrs' (
             version: rootfs: nixpkgs.lib.nameValuePair "rootfs-${version}" rootfs

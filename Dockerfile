@@ -172,7 +172,7 @@ ARG fw_version
 RUN nix build "/src#\"rootfs-$fw_version\"" -o /run/rm-rootfs && \
     nix-collect-garbage
 
-FROM nix-rootfs AS nix-emu
+FROM nix-rootfs AS nix-emu:$fw_version
 
 ARG fw_version
 RUN nix build "/src#\"rm-emu-$fw_version\"" -o /result && \

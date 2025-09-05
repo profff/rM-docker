@@ -103,6 +103,13 @@
 
           ${lib.optionalString needsPatchDhcpcd "sed -i 's/wlan/eth/' /mnt/root/lib/systemd/system/dhcpcd.service"}
 
+          # 3.22 stopped shipping dropbear.socket on all interfaces.
+          if ! [ -e /mnt/root/lib/systemd/system/dropbear.socket ]; then
+            cp /mnt/root/lib/systemd/system/dropbear-usb0.socket /mnt/root/lib/systemd/system/dropbear.socket
+            sed -i 's/.*usb0.*//' /mnt/root/lib/systemd/system/dropbear.socket
+            ln -s /lib/systemd/system/dropbear.socket /mnt/root/etc/systemd/system/sockets.target.wants/
+          fi
+
           umount /mnt/root
 
           set +x

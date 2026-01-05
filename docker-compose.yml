@@ -1,0 +1,19 @@
+services:
+  remarkable:
+    build:
+      context: .
+    image: rm-docker
+    container_name: remarkable-emulator
+    ports:
+      - "2222:22"    # SSH
+      - "8888:8888"  # rm2fb display
+      - "5555:5555"  # QEMU monitor
+    volumes:
+      - rm-rootfs:/opt/root
+      - ${SSH_PUBKEY_FILE:-~/.ssh/id_ed25519.pub}:/tmp/ssh_pubkey:ro
+    environment:
+      - INJECT_SSH_KEY=true
+    restart: unless-stopped
+
+volumes:
+  rm-rootfs:

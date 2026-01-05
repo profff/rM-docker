@@ -2,4 +2,5 @@
 
 set -eux
 
-ssh -o StrictHostKeyChecking=no root@localhost /bin/sh -l -c "'$*'"
+# Use sshpass with known password for build-time SSH access
+sshpass -p 'remarkable' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@localhost /bin/sh -l -c "'$*'"

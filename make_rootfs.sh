@@ -50,6 +50,14 @@ cp-a /etc/skel /home/root
 
 ln-s /dev/null /etc/systemd/system/remarkable-fail.service
 
+# Set known root password (remarkable) for initial SSH access
+# Password hash generated with: openssl passwd -6 -salt rmkbl remarkable
+! echo 'root:\$6\$rmkbl\$.uSZh8RCS8n4ir4OWBh61R4J.XTr5w8DJmIdnKssuWqvyykxNqhSAo//Zk7o0rLR5dMewrwc9fYCjp/5Bb9WY1:19000:0:99999:7:::' > /tmp/shadow_root
+download /etc/shadow /tmp/shadow_orig
+! head -1 /tmp/shadow_root > /tmp/shadow_new
+! tail -n +2 /tmp/shadow_orig >> /tmp/shadow_new
+upload /tmp/shadow_new /etc/shadow
+
 GFS
 
 # Handle dhcpcd.service modification for firmware versions < 3.12

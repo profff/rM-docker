@@ -75,7 +75,7 @@ RUN ./make_rootfs.sh /opt/rootfs.ext4 $fw_version
 FROM debian:bookworm AS qemu-debug
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y qemu-system-arm qemu-utils ssh netcat-openbsd
+    apt-get install --no-install-recommends -y qemu-system-arm qemu-utils ssh netcat-openbsd sshpass
 
 RUN mkdir -p /opt/root
 
@@ -154,4 +154,4 @@ RUN run_vm -serial null -daemonize && \
 RUN apt-get update && \
     apt-get install -y libevdev2 libsdl2-2.0-0
 
-CMD run_xochitl
+CMD ["/opt/bin/entrypoint.sh"]

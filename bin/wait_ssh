@@ -1,6 +1,7 @@
 #!/bin/sh
 echo "Waiting for ssh to come up..."
-while ! in_vm true
+# Use sshpass directly here for faster checking (avoids in_vm overhead)
+while ! sshpass -p 'remarkable' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o ConnectTimeout=2 root@localhost true 2>/dev/null
 do
   sleep 1
 done
